@@ -50,7 +50,10 @@ describe('digest routes', () => {
     expect(jsonResponse.status).toBe(200);
     // The JSON route wraps the rows in NightDigest; both representations expose identical order.
     const jsonJobs = payload.rows.map((row: { job: string }) => row.job);
-    const pageJobs = ['alpha', 'zeta'].filter((job) => html.includes(`<td>${job}</td>`));
+    const pageJobs = Array.from(
+      html.matchAll(/<tr(?: class="warn")?><td>([^<]+)<\/td>/g),
+      (match) => match[1],
+    );
     expect(jsonJobs).toEqual(['alpha', 'zeta']);
     expect(pageJobs).toEqual(jsonJobs);
     expect(payload).toMatchObject({ night, badLines: 1 });
